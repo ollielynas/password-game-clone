@@ -9,10 +9,12 @@ enum Condition {
     ContainsDigit(i32),
     SumOfDigits(i32),
     HasFactor(i32),
-    HasMultiple(i32),
     IsSquare(bool),
     IsCube(bool),
     IsPalindrome(bool),
+    DoesntContain(Vec<i32>),
+    ContainsDigitAlliteration(bool),
+
 
 }
 
@@ -31,7 +33,6 @@ impl Condition {
             Condition::ContainsDigit(n) => digits(num).any(|d| d == *n),
             Condition::SumOfDigits(n) => digits(num).sum::<i32>() == *n,
             Condition::HasFactor(n) => num % n == 0,
-            Condition::HasMultiple(n) => n % num == 0,
             Condition::IsSquare(n) => {
                 let root = (num as f64).sqrt() as i32;
                 (root * root == num) == *n
@@ -43,6 +44,19 @@ impl Condition {
             Condition::IsPalindrome(n) => {
                 let digits = digits(num).collect::<Vec<_>>();
                 digits.iter().eq(digits.iter().rev())==*n
+            }
+            Condition::DoesntContain(n) => {
+                let digits = digits(num).collect::<Vec<_>>();
+                !digits.iter().any(|d| n.contains(d))
+            }
+            Condition::ContainsDigitAlliteration(n) => {
+                let s = num.to_string();
+                for i in 0..=9 {
+                    if s.contains(&i.to_string().repeat(2)) {
+                        return *n;
+                    }
+                }
+                !*n
             }
         }
     }
@@ -64,9 +78,7 @@ impl Condition {
                     .unwrap()
                     .clone(),
             ),
-            Condition::HasMultiple(_) => Condition::HasMultiple(
-                num*rng.gen_range(1..10)
-            ),
+
             Condition::IsSquare(_) => {
                 let root = (num as f64).sqrt() as i32;
                 Condition::IsSquare(root * root == num)
@@ -79,6 +91,19 @@ impl Condition {
                 let digits = digits(num).collect::<Vec<_>>();
                 Condition::IsPalindrome(digits.iter().eq(digits.iter().rev()))
             },
+            Condition::DoesntContain(_) => {
+                let digits = digits(num).collect::<Vec<_>>();
+                Condition::DoesntContain([0,1,2,3,4,5,6,7,8,9].iter().filter(|i| !digits.contains(i)).map(|i| *i).collect::<Vec<_>>())
+            },
+            Condition::ContainsDigitAlliteration(_) => {
+                let s = num.to_string();
+                for i in 0..=9 {
+                    if s.contains(&i.to_string().repeat(2)) {
+                        return Condition::ContainsDigitAlliteration(true);
+                    }
+                }
+                Condition::ContainsDigitAlliteration(false)
+            },
         }
     }
 
@@ -86,13 +111,14 @@ impl Condition {
         match self {
             Condition::LargerThan(n) => format!("must be larger than {}", n),
             Condition::SmallerThan(n) => format!("must be smaller than {}", n),
-            Condition::ContainsDigit(n) => format!("the number mus contain the get digit {}", n),
+            Condition::ContainsDigit(n) => format!("the number must contain the get digit {}", n),
             Condition::SumOfDigits(n) => format!("the digits of the number must sum to {}", n),
             Condition::HasFactor(n) => format!("the number must have the factor {}", n),
-            Condition::HasMultiple(n) => format!("the number must be a factor of {}", n),
             Condition::IsSquare(n) => format!("the number must {} be a square", if *n {""} else {"not"}),
             Condition::IsCube(n) => format!("the number must {} be a cube", if *n {""} else {"not"}),
             Condition::IsPalindrome(n) => format!("the number must {} be a palindrome", if *n {""} else {"not"}),
+            Condition::DoesntContain(n) => if n != &vec![] {format!("the number must not contain the digits {:?}", n)} else {"Contains every digit from 0 to 9".to_owned()},
+            Condition::ContainsDigitAlliteration(n) => format!("the number must {} contain alliteration", if *n {""} else {"not"}),
 
         }
     }
@@ -109,13 +135,15 @@ fn main() {
             Condition::SmallerThan(0),
             Condition::ContainsDigit(0),
             Condition::SumOfDigits(0),
-            Condition::HasFactor(0),
-            Condition::HasMultiple(0),
+            Condition::HasFactor(0),            
             Condition::IsSquare(false),
+            Condition::ContainsDigitAlliteration(false),
             Condition::IsCube(false),
             Condition::IsPalindrome(false),
-
+            Condition::DoesntContain(vec![]),
         ];
+
+        
         unseen.iter_mut().for_each(|i| *i = i.as_valid(number));
         unseen.shuffle(&mut rng);
         let mut seen: Vec<Condition> = vec![];
