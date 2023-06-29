@@ -169,7 +169,11 @@ fn main() {
             seen.sort_by(|c, d| c.check(valid_num).cmp(&d.check(valid_num)));
 
             let mut new_text = String::new();
+            if unseen.len() == 0 && seen.iter().all(|i| i.check(valid_num)) {
+                new_text.push_str("<h2>You win!</h2>");
+            }
             for i in seen.iter() {
+                
                 new_text.push_str(&format!("<div class='{}'>{}</div>", i.check(valid_num), i.as_string()));
             }
             text.set(new_text);
