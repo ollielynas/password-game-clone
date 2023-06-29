@@ -111,7 +111,7 @@ impl Condition {
         match self {
             Condition::LargerThan(n) => format!("must be larger than {}", n),
             Condition::SmallerThan(n) => format!("must be smaller than {}", n),
-            Condition::ContainsDigit(n) => format!("the number must contain the get digit {}", n),
+            Condition::ContainsDigit(n) => format!("the number must contain the digit {}", n),
             Condition::SumOfDigits(n) => format!("the digits of the number must sum to {}", n),
             Condition::HasFactor(n) => format!("the number must have the factor {}", n),
             Condition::IsSquare(n) => format!("the number must {} be a square", if *n {""} else {"not"}),
