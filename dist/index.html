@@ -6,16 +6,16 @@
 
     <link
       rel="preload"
-      href="/password-game-clone-80dc18cb4a441f62_bg.wasm"
+      href="/dist/password-game-clone-80dc18cb4a441f62_bg.wasm"
       as="fetch"
       type="application/wasm"
       crossorigin=""
     />
-    <link type="script" rel="modulepreload" href="/password-game-clone-80dc18cb4a441f62.js" />
+    <link type="application/javascript" rel="modulepreload" href="/dist/password-game-clone-80dc18cb4a441f62.js" />
   </head>
   <body>
     <script type="module">
-      import init from "/password-game-clone-80dc18cb4a441f62.js";
+      import init from "/dist/password-game-clone-80dc18cb4a441f62.js";
       init("/password-game-clone-80dc18cb4a441f62_bg.wasm");
     </script>
   </body>
